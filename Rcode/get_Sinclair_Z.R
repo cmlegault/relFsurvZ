@@ -3,6 +3,7 @@
 
 library("ASAPplots")
 library("dplyr")
+library("ggplot2")
 
 decoder <- read.csv(".\\ADIOS_data\\file_decoder.csv")
 nstocks <- length(decoder$Short.Name)
@@ -51,3 +52,14 @@ for (istock in 1:nstocks){
   }
 }
 resdf
+
+for (istock in 1:nstocks){
+  thisstock <- decoder$Short.Name[istock]
+  p <- ggplot(filter(resdf, stock == thisstock), aes(x=plotyear, y=Sinclair_Z)) +
+    geom_line() +
+    geom_ribbon(aes(ymin=low90, ymax=high90), alpha=0.3) +
+    facet_wrap(~survey) +
+    ggtitle(thisstock) +
+    theme_bw()
+  print(p)
+}
