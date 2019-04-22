@@ -40,7 +40,7 @@ for (istock in 1:nstocks){
     }
     myres <- calc_Sinclair_Z(mat)
     res[[istock]]$z[[isurvey]] <- myres
-    if (myres$error == FALSE){
+    if (myres$error == FALSE & !all(is.na(myres$est.Sinclair.Z))){
       thisdf <- data.frame(stock = decoder$Short.Name[istock],
                            survey = as.character(surveys[isurvey]),
                            plotyear = rep(myres$plot.year, 3),
@@ -56,6 +56,7 @@ resdf
 for (istock in 1:nstocks){
   thisstock <- decoder$Short.Name[istock]
   p <- ggplot(filter(resdf, stock == thisstock), aes(x=plotyear, y=Sinclair_Z)) +
+    geom_point() +
     geom_line() +
     geom_ribbon(aes(ymin=low90, ymax=high90), alpha=0.3) +
     facet_wrap(~survey) +
