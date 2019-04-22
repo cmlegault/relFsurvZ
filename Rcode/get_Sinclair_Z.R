@@ -1,16 +1,15 @@
 # get_Sinclair_Z.R
 # estimate total mortality rate from survey catch at age data in ADIOS format using Sinclair method
 
-# rem set working directory to source file location to start
 library("ASAPplots")
 library("dplyr")
 
-decoder <- read.csv("..\\ADIOS_data\\file_decoder.csv")
+decoder <- read.csv(".\\ADIOS_data\\file_decoder.csv")
 nstocks <- length(decoder$Short.Name)
 
 res <- list()
 for (istock in 1:nstocks){
-  dat <- read.csv(paste0("..\\ADIOS_data\\", decoder$ADIOS.name[istock], ".csv"))
+  dat <- read.csv(paste0(".\\ADIOS_data\\", decoder$ADIOS.name[istock], ".csv"))
   surveys <- unique(dat$SURVEY)
   nsurveys <- length(surveys)
   res[[istock]] <- list()
