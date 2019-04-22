@@ -8,6 +8,7 @@ decoder <- read.csv(".\\ADIOS_data\\file_decoder.csv")
 nstocks <- length(decoder$Short.Name)
 
 res <- list()
+resdf <- data.frame()
 for (istock in 1:nstocks){
   dat <- read.csv(paste0(".\\ADIOS_data\\", decoder$ADIOS.name[istock], ".csv"))
   surveys <- unique(dat$SURVEY)
@@ -16,9 +17,9 @@ for (istock in 1:nstocks){
   res[[istock]]$stock <- decoder$ADIOS.name[istock]
   res[[istock]]$surveys <- surveys
   res[[istock]]$z <- list()
-  for (i in 1:nsurveys){
+  for (isurvey in 1:nsurveys){
     sdat <- dat %>%
-      filter(SURVEY == surveys[i])
+      filter(SURVEY == surveys[isurvey])
     minyear <- min(sdat$YEAR)
     maxyear <- max(sdat$YEAR)
     minage <- min(sdat$AGE)
@@ -36,6 +37,17 @@ for (istock in 1:nstocks){
       mat[, itest] <- NA
       itest <- itest + 1
     }
-    res[[istock]]$z[[i]] <- calc_Sinclair_Z(mat)
+    myres <- calc_Sinclair_Z(mat)
+    res[[istock]]$z[[isurvey]] <- myres
+    if (myres$error == FALSE){
+      thisdf <- data.frame(stock = decoder$Short.Name[istock],
+                           survey = as.character(surveys[isurvey]),
+                           plotyear = rep(myres$plot.year, 3),
+                           Sinclair_Z = myres$est.Sinclair.Z[,1],
+                           low90 = myres$est.Sinclair.Z[,2],
+                           high90 = myres$est.Sinclair.Z[,3])
+      resdf <- rbind(resdf, thisdf)
+    }
   }
 }
+resdf
