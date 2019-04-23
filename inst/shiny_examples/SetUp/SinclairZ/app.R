@@ -72,6 +72,10 @@ server <- function(input, output) {
     filter(so_use, stock==input$stock, survey==input$survey)
   })
   
+  mydat <- reactive({
+    filter(datdf, stock==input$stock, survey==input$survey)
+  })
+  
   surveyoption <- reactive({
     filter(so_use, stock==input$stock) %>%
       select(survey)
