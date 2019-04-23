@@ -74,7 +74,8 @@ defdf <- data.frame(stockID = integer(),
                     startage = integer(),
                     endage = integer(),
                     firstyear = integer(),
-                    endyear = integer())
+                    endyear = integer(),
+                    note = character())
 for (istock in 1:nstocks){
   dat <- read.csv(paste0(".\\ADIOS_data\\", decoder$ADIOS.name[istock], ".csv"))
   surveys <- res[[istock]]$surveys
@@ -93,9 +94,14 @@ for (istock in 1:nstocks){
                          startage = minage,
                          endage = maxage,
                          firstyear = minyear,
-                         endyear = maxyear)
+                         endyear = maxyear,
+                         note = "original")
     defdf <- rbind(defdf, thisdf)
   }
 }
 defdf
 write.csv(defdf, file=".\\ADIOS_data\\survey_options_orig.csv", row.names = FALSE)
+write.csv(defdf, file=".\\ADIOS_data\\survey_options_use.csv", row.names = FALSE)
+
+# now run Shiny app.R and change survey_options_use.csv for each stock/survey combination
+
