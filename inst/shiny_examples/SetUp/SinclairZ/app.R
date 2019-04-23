@@ -41,9 +41,7 @@ ui <- fluidPage(
                      choices = decoder$Short.Name),
          
          # need to get this interactive using so_use info
-         selectInput("survey",
-                     "Choose a survey:",
-                     choices = c("a", "b", "c")),
+         uiOutput("surveyselect"),
          
          # need to make dependent on survey
          sliderInput("ages",
@@ -61,7 +59,7 @@ ui <- fluidPage(
       # Show a plot of the generated distribution
       mainPanel(
         plotOutput("SinclairZ"),
-        tableOutput("delme")
+        tableOutput("sumtable")
       )
    )
 )
@@ -70,6 +68,20 @@ ui <- fluidPage(
 # Define server logic
 server <- function(input, output) {
   
+  mydef <- reactive({
+    filter(so_use, stock==input$stock, survey==input$survey)
+  })
+  
+  surveyoption <- reactive({
+    filter(so_use, stock==input$stock) %>%
+      select(survey)
+  })
+  
+  output$surveyselect <- renderUI({
+    selectInput("survey",
+                "Choose a survey:",
+                choices = surveyoption())
+  })
   
   output$SinclairZ <- renderPlot({
     ggplot(szdf, aes(x=Year, y=Z)) +
@@ -79,8 +91,8 @@ server <- function(input, output) {
       theme_bw()
   })
   
-  output$delme <- renderTable({
-    decoder
+  output$sumtable <- renderTable({
+    mydef()
   })
 }
 
