@@ -19,14 +19,15 @@ for (irow in 1:length(decoder[,1])){
   datdf <- rbind(datdf, dat)
 }
 
-# tempo
+# tempo - replace with real Sinclair Z function
 Z = runif(30)
 szdf <- data.frame(Year = seq(1981, 2010),
                   Z = Z,
                   low90 = Z - 0.2,
                   high90 = Z + 0.2)
 
-# Define UI for application that draws a histogram
+###########################
+# Define UI for application
 ui <- fluidPage(
    
    # Application title
@@ -65,7 +66,8 @@ ui <- fluidPage(
    )
 )
 
-# Define server logic required to draw a histogram
+#####################
+# Define server logic
 server <- function(input, output) {
   
   
@@ -73,7 +75,7 @@ server <- function(input, output) {
     ggplot(szdf, aes(x=Year, y=Z)) +
       geom_point() +
       geom_line() +
-      geom_ribbon(aes(ymin=low90, ymax=high90)) +
+      geom_ribbon(aes(ymin=low90, ymax=high90), alpha = 0.3) +
       theme_bw()
   })
   
