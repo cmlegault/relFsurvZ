@@ -34,7 +34,7 @@ for (istock in 1:nstocks){
     }
     mysum <- apply(mat, 2, sum, na.rm=TRUE)
     itest <- 1
-    while(mysum[itest + 1] - mysum[itest] > 0){
+    while((mysum[itest + 1] - mysum[itest] > 0) & (itest < (maxage - minage + 1))){
       mat[, itest] <- NA
       itest <- itest + 1
     }
