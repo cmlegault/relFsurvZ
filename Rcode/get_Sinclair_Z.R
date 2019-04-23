@@ -15,7 +15,7 @@ for (istock in 1:nstocks){
   surveys <- unique(dat$SURVEY)
   nsurveys <- length(surveys)
   res[[istock]] <- list()
-  res[[istock]]$stock <- decoder$ADIOS.name[istock]
+  res[[istock]]$stock <- decoder$Short.Name[istock]
   res[[istock]]$surveys <- surveys
   res[[istock]]$z <- list()
   for (isurvey in 1:nsurveys){
@@ -53,6 +53,7 @@ for (istock in 1:nstocks){
 }
 resdf
 
+# first pass Sinclair Z plots
 for (istock in 1:nstocks){
   thisstock <- decoder$Short.Name[istock]
   p <- ggplot(filter(resdf, stock == thisstock), aes(x=plotyear, y=Sinclair_Z)) +
@@ -64,3 +65,37 @@ for (istock in 1:nstocks){
     theme_bw()
   print(p)
 }
+
+# create default list of stocks, surveys, usesurvey (T/F), start age, end age, first year, last year
+defdf <- data.frame(stockID = integer(),
+                    stock = character(),
+                    survey = character(),
+                    usesurvey = logical(),
+                    startage = integer(),
+                    endage = integer(),
+                    firstyear = integer(),
+                    endyear = integer())
+for (istock in 1:nstocks){
+  dat <- read.csv(paste0(".\\ADIOS_data\\", decoder$ADIOS.name[istock], ".csv"))
+  surveys <- res[[istock]]$surveys
+  nsurveys <- length(surveys)
+  for (isurvey in 1:nsurveys){
+    sdat <- dat %>%
+      filter(SURVEY == surveys[isurvey])
+    minyear <- min(sdat$YEAR)
+    maxyear <- max(sdat$YEAR)
+    minage <- min(sdat$AGE)
+    maxage <- max(sdat$AGE)
+    thisdf <- data.frame(stockID = istock,
+                         stock = as.character(res[[istock]]$stock),
+                         survey = as.character(surveys[isurvey]),
+                         usesurvey = TRUE,
+                         startage = minage,
+                         endage = maxage,
+                         firstyear = minyear,
+                         endyear = maxyear)
+    defdf <- rbind(defdf, thisdf)
+  }
+}
+defdf
+write.csv(defdf, file=".\\ADIOS_data\\survey_options_orig.csv", row.names = FALSE)
