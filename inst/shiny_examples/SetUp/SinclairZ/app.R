@@ -102,7 +102,10 @@ ui <- fluidPage(
          # need to make dependent on input file
          checkboxInput("usesurvey",
                        "Check to use survey",
-                       value = TRUE)
+                       value = TRUE),
+         
+         actionButton("update", "Update Values")
+         
       ),
       
       # Show a plot of the generated distribution
@@ -118,6 +121,13 @@ ui <- fluidPage(
 #####################
 # Define server logic
 server <- function(input, output) {
+  
+  # not sure why this is not working, need to figure out how to update so_use for correct row
+  observeEvent(input$update, {
+    so_use$usesurvey[1] <-  input$usesurvey
+    so_use$startage[1] <-  input$ages[1]
+    so_use$endage[1] <-  input$ages[2]
+  })
   
   mydef <- reactive({
     filter(so_use, stock==input$stock, survey==input$survey)
@@ -162,7 +172,7 @@ server <- function(input, output) {
   })
   
   output$sumtable <- renderTable({
-    head(mydat())
+    mydef()
   })
   
   output$Zests <- renderTable({
