@@ -96,8 +96,8 @@ ui <- fluidPage(
          sliderInput("ages",
                      "Age range for Z calcs:",
                      min = 0,
-                     max = 50,
-                     value=c(0,50)),
+                     max = 30,
+                     value=c(0, 30)),
          
          # need to make dependent on input file
          checkboxInput("usesurvey",
@@ -147,6 +147,7 @@ server <- function(input, output) {
   
   output$resids <- renderPlot({
     ggplot(res()$resids, aes(x=as.factor(Age), y=resid)) +
+      geom_hline(yintercept = 0, col="red") +
       geom_boxplot(na.rm = TRUE) +
       theme_bw()
   })
