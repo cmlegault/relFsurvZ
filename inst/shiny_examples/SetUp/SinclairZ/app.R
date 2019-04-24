@@ -142,9 +142,9 @@ server <- function(input, output) {
   
   output$SinclairZ <- renderPlot({
     ggplot(res()$Zests, aes(x=Year, y=Sinclair_Z)) +
-      geom_point() +
-      geom_line() +
-      geom_ribbon(aes(ymin=low90, ymax=high90), alpha = 0.3) +
+      geom_point(na.rm = TRUE) +
+      geom_line(na.rm = TRUE) +
+      geom_ribbon(aes(ymin=low90, ymax=high90), alpha = 0.3, na.rm = TRUE) +
       theme_bw()
   })
   
