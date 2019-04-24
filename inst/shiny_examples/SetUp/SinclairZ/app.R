@@ -154,9 +154,10 @@ server <- function(input, output) {
   
   output$SinclairZ <- renderPlot({
     ggplot(res()$Zests, aes(x=Year, y=Sinclair_Z)) +
+      geom_hline(yintercept = 0, col="blue") +
       geom_point(na.rm = TRUE) +
       geom_line(na.rm = TRUE) +
-      geom_ribbon(aes(ymin=low90, ymax=high90), alpha = 0.3, na.rm = TRUE) +
+      geom_ribbon(aes(ymin=low90, ymax=high90), alpha = 0.3) +
       theme_bw()
   })
   
@@ -165,7 +166,7 @@ server <- function(input, output) {
   })
   
   output$Zests <- renderTable({
-    res()$est.Sinclair.Z
+    res()$Zests
   })
 }
 
