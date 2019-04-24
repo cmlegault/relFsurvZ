@@ -159,7 +159,7 @@ server <- function(input, output) {
     ggplot(res()$resids, aes(x=as.factor(Age), y=resid)) +
       geom_hline(yintercept = 0, col="red") +
       geom_boxplot(na.rm = TRUE) +
-      theme_bw()
+      theme_minimal(base_size = 20)
   })
   
   output$SinclairZ <- renderPlot({
@@ -168,7 +168,7 @@ server <- function(input, output) {
       geom_point(na.rm = TRUE) +
       geom_line(na.rm = TRUE) +
       geom_ribbon(aes(ymin=low90, ymax=high90), alpha = 0.3) +
-      theme_bw()
+      theme_minimal(base_size = 20)
   })
   
   output$sumtable <- renderTable({
