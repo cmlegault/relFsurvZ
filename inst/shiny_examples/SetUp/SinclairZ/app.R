@@ -22,6 +22,7 @@ for (irow in 1:length(decoder[,1])){
 
 # modification of calc_Sinclair_Z function from ASAPplots to use data frame as input
 # mydf has columns Year, Age, cohort, lnVal and all lnVal=NA already removed
+# returned list has just error flag and Zests and resids data frames for use in ggplot
 get_Sinclair_Z_df <- function(mydf){
   res <- list()
 
@@ -38,6 +39,8 @@ get_Sinclair_Z_df <- function(mydf){
   est.Sinclair.Z <- matrix(NA, nrow=(ny-3), ncol=3)
   plot.year <- rep(NA, ny-3)
   
+  res$resids <- data.frame()
+  
   for (i in 1:(ny-3)){
     data <- filter(mydf, Year %in% seq(year[i], year[i + 3]))
     can.calc <- FALSE
@@ -50,19 +53,20 @@ get_Sinclair_Z_df <- function(mydf){
       my.lm <- lm(data$lnVal ~ as.factor(data$cohort) + data$Age)
       data$pred <- predict(my.lm)
       data$resid <- residuals(my.lm)
-      res[[i]] <- data
+      #res[[i]] <- data
+      res$resids <- rbind(res$resids, data)
       est.Sinclair.Z[i,1] <- -1 * my.lm$coefficients[names(my.lm$coefficients) == "data$Age"]
       est.Sinclair.Z[i,2:3] <- -1 * rev(confint(my.lm, "data$Age", level=0.90))
     }
     else{  
-      res[[i]] <- data
+      #res[[i]] <- data
       est.Sinclair.Z[i,] <- rep(NA, 3)
     }
     plot.year[i] <- year[i] + 1.5
   }
-  colnames(est.Sinclair.Z) <- c("Sinclair_Z","low90%","high90%")
-  res$est.Sinclair.Z <- est.Sinclair.Z
-  res$plot.year <- plot.year
+  #colnames(est.Sinclair.Z) <- c("Sinclair_Z","low90%","high90%")
+  #res$est.Sinclair.Z <- est.Sinclair.Z
+  #res$plot.year <- plot.year
   res$Zests <- data.frame(Year = plot.year,
                           Sinclair_Z = est.Sinclair.Z[,1],
                           low90 = est.Sinclair.Z[,2],
@@ -103,6 +107,7 @@ ui <- fluidPage(
       
       # Show a plot of the generated distribution
       mainPanel(
+        plotOutput("resids"),
         plotOutput("SinclairZ"),
         tableOutput("sumtable"),
         tableOutput("Zests")
@@ -138,6 +143,12 @@ server <- function(input, output) {
     selectInput("survey",
                 "Choose a survey:",
                 choices = surveyoption())
+  })
+  
+  output$resids <- renderPlot({
+    ggplot(res()$resids, aes(x=as.factor(Age), y=resid)) +
+      geom_boxplot(na.rm = TRUE) +
+      theme_bw()
   })
   
   output$SinclairZ <- renderPlot({
