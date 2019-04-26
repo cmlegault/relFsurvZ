@@ -99,7 +99,7 @@ for (istock in 1:nstocks){
     defdf <- rbind(defdf, thisdf)
   }
 }
-# defdf$rowID <- seq(1, length(defdf[,1])
+defdf$rowID <- seq(1, length(defdf[,1]))
 defdf
 write.csv(defdf, file=".\\ADIOS_data\\survey_options_orig.csv", row.names = FALSE)
 write.csv(defdf, file=".\\ADIOS_data\\survey_options_use.csv", row.names = FALSE)
