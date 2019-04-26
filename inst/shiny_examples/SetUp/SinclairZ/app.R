@@ -79,27 +79,22 @@ get_Sinclair_Z_df <- function(mydf){
 # Define UI for application
 ui <- fluidPage(
    
-   # Application title
    titlePanel("Sinclair Z Examiner"),
    
-   # Sidebar with a slider input for number of bins 
    sidebarLayout(
       sidebarPanel(
          selectInput("stock",
                      "Choose a stock:",
                      choices = decoder$Short.Name),
          
-         # need to get this interactive using so_use info
          uiOutput("surveyselect"),
          
-         # need to make dependent on survey
          sliderInput("ages",
                      "Age range for Z calcs:",
                      min = 0,
                      max = 30,
                      value=c(0, 30)),
          
-         # need to make dependent on input file
          checkboxInput("usesurvey",
                        "Check to use survey",
                        value = TRUE),
@@ -111,9 +106,7 @@ ui <- fluidPage(
       # Show a plot of the generated distribution
       mainPanel(
         plotOutput("resids"),
-        plotOutput("SinclairZ"),
-        tableOutput("sumtable"),
-        tableOutput("Zests")
+        plotOutput("SinclairZ")
       )
    )
 )
@@ -122,14 +115,13 @@ ui <- fluidPage(
 # Define server logic
 server <- function(input, output) {
   
-  # not sure why this is not working, need to figure out how to update so_use for correct row
-  my_so_use <- eventReactive(input$update, {
+  observeEvent(input$update, {
     my_use <- read.csv("..\\..\\..\\..\\ADIOS_data\\survey_options_use.csv", stringsAsFactors = FALSE)
     my_use$usesurvey[myrow()] <-  input$usesurvey
     my_use$startage[myrow()] <-  input$ages[1]
     my_use$endage[myrow()] <-  input$ages[2]
     my_use$note[myrow()] <- "modified by Shiny app"
-    my_use
+    write.csv(my_use, file="..\\..\\..\\..\\ADIOS_data\\survey_options_use.csv", row.names = FALSE)
   })
   
   myrow <- reactive({
@@ -183,14 +175,6 @@ server <- function(input, output) {
       theme_minimal(base_size = 20)
   })
   
-  output$sumtable <- renderTable({
-    #mydef()
-    my_so_use()
-  })
-  
-  output$Zests <- renderTable({
-    res()$Zests
-  })
 }
 
 # Run the application 
