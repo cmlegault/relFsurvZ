@@ -9,12 +9,13 @@ library(shiny)
 library(ggplot2)
 library(dplyr)
 
-decoder <- read.csv("..\\..\\..\\..\\ADIOS_data\\file_decoder.csv")
-so_use <- read.csv("..\\..\\..\\..\\ADIOS_data\\survey_options_use.csv")
+decoder <- read.csv("..\\..\\..\\..\\ADIOS_data\\file_decoder.csv", stringsAsFactors = FALSE)
+so_use <- read.csv("..\\..\\..\\..\\ADIOS_data\\survey_options_use.csv", stringsAsFactors = FALSE)
 
 datdf <- data.frame()
 for (irow in 1:length(decoder[,1])){
-  dat <- read.csv(paste0("..\\..\\..\\..\\ADIOS_data\\", decoder$ADIOS.name[irow], ".csv"))
+  dat <- read.csv(paste0("..\\..\\..\\..\\ADIOS_data\\", decoder$ADIOS.name[irow], ".csv"), 
+                  stringsAsFactors = FALSE)
   dat$stock <- decoder$Short.Name[irow]
   datdf <- rbind(datdf, dat)
 }
@@ -122,19 +123,23 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   # not sure why this is not working, need to figure out how to update so_use for correct row
-  observeEvent(input$update, {
-    so_use$usesurvey[1] <-  input$usesurvey
-    so_use$startage[1] <-  input$ages[1]
-    so_use$endage[1] <-  input$ages[2]
+  my_so_use <- eventReactive(input$update, {
+    my_use <- read.csv("..\\..\\..\\..\\ADIOS_data\\survey_options_use.csv", stringsAsFactors = FALSE)
+    my_use$usesurvey[myrow()] <-  input$usesurvey
+    my_use$startage[myrow()] <-  input$ages[1]
+    my_use$endage[myrow()] <-  input$ages[2]
+    my_use$note[myrow()] <- "modified by Shiny app"
+    my_use
   })
   
   myrow <- reactive({
     filter(so_use, stock==input$stock, survey==input$survey) %>%
-      select(rowID)
+      select(rowID) %>%
+      as.numeric(.)
   })
   
   mydef <- reactive({
-    filter(so_use, rowID==as.numeric(myrow()))
+    filter(so_use, rowID==myrow())
   })
   
   mydat <- reactive({
@@ -179,12 +184,12 @@ server <- function(input, output) {
   })
   
   output$sumtable <- renderTable({
-    mydef()
+    #mydef()
+    my_so_use()
   })
   
   output$Zests <- renderTable({
-    #res()$Zests
-    myrow()
+    res()$Zests
   })
 }
 
