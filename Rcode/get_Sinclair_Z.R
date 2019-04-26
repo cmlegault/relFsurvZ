@@ -105,4 +105,7 @@ write.csv(defdf, file=".\\ADIOS_data\\survey_options_orig.csv", row.names = FALS
 write.csv(defdf, file=".\\ADIOS_data\\survey_options_use.csv", row.names = FALSE)
 
 # now run Shiny app.R and change survey_options_use.csv for each stock/survey combination
+# note the file survey_options_use.csv will be overwritten - so be careful
+
+
 
