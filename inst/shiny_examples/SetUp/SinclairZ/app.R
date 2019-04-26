@@ -15,7 +15,6 @@ so_use <- read.csv("..\\..\\..\\..\\ADIOS_data\\survey_options_use.csv")
 datdf <- data.frame()
 for (irow in 1:length(decoder[,1])){
   dat <- read.csv(paste0("..\\..\\..\\..\\ADIOS_data\\", decoder$ADIOS.name[irow], ".csv"))
-  dat$decoder_row <- irow
   dat$stock <- decoder$Short.Name[irow]
   datdf <- rbind(datdf, dat)
 }
@@ -129,8 +128,13 @@ server <- function(input, output) {
     so_use$endage[1] <-  input$ages[2]
   })
   
+  myrow <- reactive({
+    filter(so_use, stock==input$stock, survey==input$survey) %>%
+      select(rowID)
+  })
+  
   mydef <- reactive({
-    filter(so_use, stock==input$stock, survey==input$survey)
+    filter(so_use, rowID==as.numeric(myrow()))
   })
   
   mydat <- reactive({
@@ -179,7 +183,8 @@ server <- function(input, output) {
   })
   
   output$Zests <- renderTable({
-    res()$Zests
+    #res()$Zests
+    myrow()
   })
 }
 
