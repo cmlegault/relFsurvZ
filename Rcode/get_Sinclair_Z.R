@@ -74,7 +74,8 @@ for (istock in 1:nstocks){
       as.numeric(.)
     if (so_use$usesurvey[myrow] == TRUE){
       sdat <- dat %>%
-        filter(SURVEY == surveys[isurvey])
+        filter(SURVEY == surveys[isurvey]) %>%
+        filter(AGE %in% seq(so_use$startage[myrow], so_use$endage[myrow]))
       minyear <- min(sdat$YEAR)
       maxyear <- max(sdat$YEAR)
       minage <- min(sdat$AGE)
@@ -85,12 +86,6 @@ for (istock in 1:nstocks){
         myrow <- sdat$YEAR[j] - minyear + 1
         mycol <- sdat$AGE[j] - minage + 1
         mat[myrow, mycol] <- sdat$NO_AT_AGE[j]
-      }
-      mysum <- apply(mat, 2, sum, na.rm=TRUE)
-      itest <- 1
-      while((mysum[itest + 1] - mysum[itest] > 0) & (itest < (maxage - minage + 1))){
-        mat[, itest] <- NA
-        itest <- itest + 1
       }
       myres <- calc_Sinclair_Z(mat)
       res[[istock]]$z[[isurvey]] <- myres
@@ -125,7 +120,4 @@ for (istock in 1:nstocks){
   print(p)
 }
 dev.off()
-
-
-
 
