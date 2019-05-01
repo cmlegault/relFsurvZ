@@ -37,6 +37,8 @@ for (istock in 1:nstocks){
         facet_grid(AGE~., scales = "free_y") +
         geom_hline(aes(yintercept = mean_length), mean_len, color="red", linetype="dashed") +
         ggtitle(paste(mystock, surveys[isurvey])) +
+        xlab("Year") +
+        ylab("Length (cm)") +
         theme_bw()
       print(p)
     }
