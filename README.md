@@ -1,6 +1,10 @@
 # relFsurvZ
 
-Work in progress looking at relative F, survey Z, and other basic features of index-based approaches across large number of stocks.
+Examination of some basic data collected by surveys across a number of stocks.
+
+## Stocks
+
+Only stocks with age data available in the ADIOS database survey module were used. There were 19 stocks selected, which can be found in ./ADIOS_data/file_decoder.csv. There are a large number of csv files created by ADIOS to simplify data extraction. The ADIOS database may contain surveys not used in the stock assessment or may miss surveys that are included in the stock assessment. Only NEFSC and MADMF surveys are currently available in the ADIOS database. For this work, I did not include the NEFSC winter survey for any stock, and removed surveys with few years of age data available (see Sinclair Z description below). 
 
 ## Sinclair Z
 
@@ -8,9 +12,7 @@ Estimates total mortality (Z) from survey catch at age indices using four year m
 
 Sinclair, A.F. 2001. Natural mortality of cod (Gadus morhua) in the Southern Gulf of St Lawrence. ICES Journal of Marine Science. 58: 1-10.
 
-### Application to Northeast Fisheries Science Center stocks
-
-Survey catch at age indices for 19 stocks were collected. Only surveys available in the ADIOS database were used, which may contain surveys not used in the stock assessment or may miss surveys that are included in the stock assessment. Only NEFSC and MADMF surveys are currently available in the ADIOS database. There is a separate csv file for each stock, see ./ADIOS_data/file_decoder.csv for a (hopefully) short and descriptive name for each stock. Each stock has from one to five surveys available. A Shiny app was written to examine the age range to use for each stock (available in the ./inst/shiny_examples/SetUp/SinclairZ subdirectory). The goal was to get the residuals centered on zero for all ages within the age range. The choices I made are saved in ./ADIOS_data/survey_options_use.csv. You can look at the selections made there and use the Shiny app to see how the total mortality estimates change with different age ranges (typically not much for similar age ranges). These choices are reflected in the ./figs/Sinclair_Z_plots.pdf and associated resdf.csv file of total mortality point estimates and 90% confidence intervals.
+A Shiny app was written to examine the age range to use for each stock (available in the ./inst/shiny_examples/SetUp/SinclairZ subdirectory). The goal was to get the residuals centered on zero for all ages within the age range. The choices I made are saved in ./ADIOS_data/survey_options_use.csv. You can look at the selections made there and use the Shiny app to see how the total mortality estimates change with different age ranges (typically not much for similar age ranges). These choices are reflected in the ./figs/Sinclair_Z_plots.pdf and associated resdf.csv file of total mortality point estimates and 90% confidence intervals.
 
 ## Mean length at age
 
