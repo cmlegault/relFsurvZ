@@ -21,8 +21,8 @@ for (istock in 1:nstocks){
 
   dat <- read.csv(file = paste0(".\\ADIOS_data\\", getfiles[istock], ".csv"))
   mystock <- decoder$Short.Name[istock]
-  sdat <- left_join(dat, mso_use) %>%
-    filter(usesurvey == TRUE)
+  suppressWarnings(suppressMessages(sdat <- left_join(dat, mso_use) %>%
+    filter(usesurvey == TRUE)))
   
   p <- ggplot(sdat, aes(x=YEAR, y=medianK)) +
     geom_point() +
